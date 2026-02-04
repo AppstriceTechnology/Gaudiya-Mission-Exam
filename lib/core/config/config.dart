@@ -5,13 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 export 'colors.dart';
 
 /// === Config ===
-const appName = 'Elite Quiz';
-const packageName = 'com.wrteam.flutterquiz';
+const appName = 'Gaudiya Mission Exam';
+const packageName = 'com.gaudiyamission.exam';
 
 /// Add your panel url here
 // NOTE: make sure to not add '/' at the end of url
 // NOTE: make sure to check if admin panel is http or https
-const panelUrl = 'https://elitequiz.wrteam.me';
+const panelUrl = 'https://exam.gaudiyamission.org';
 
 /// === Branding ===
 ///

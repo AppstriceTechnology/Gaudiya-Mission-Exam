@@ -78,3 +78,10 @@ flutter:
     - assets/config/sounds/
     - assets/images/
     - assets/images/bottom_nav_icons/
+flutter_launcher_icons:
+    android: true
+    ios: true
+    image_path: "assets/config/launcher_icons/app_logo_icon.png"
+    adaptive_icon_background: "assets/config/launcher_icons/background.png"
+    adaptive_icon_foreground: "assets/config/launcher_icons/foreground.png"
+    min_sdk_android: 21

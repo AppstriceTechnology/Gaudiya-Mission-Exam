@@ -6,5 +6,5 @@ enum AuthProviders {
   ;
 
   static AuthProviders fromString(String v) =>
-      .values.firstWhere((e) => e.toString() == v);
+      AuthProviders.values.firstWhere((e) => e.toString() == v);
 }

@@ -90,7 +90,12 @@ class AuthRepository {
       var userExists = !isNewUser;
 
       if (authProvider == AuthProviders.email) {
-        userExists = await _authRemoteDataSource.isUserExist(userUid);
+        try {
+          userExists = await _authRemoteDataSource.isUserExist(userUid);
+        } catch (e) {
+          print('Error checking user existence: $e');
+          userExists = false; // Assume user doesn't exist if check fails
+        }
       }
 
       if (!userExists) {
@@ -109,16 +114,24 @@ class AuthRepository {
           registeredUser['api_token'].toString(),
         );
       } else {
-        final jwtToken = await _authRemoteDataSource.getJWTTokenOfUser(
-          firebaseId: userUid,
-          type: authProvider.name,
-        );
+        try {
+          final jwtToken = await _authRemoteDataSource.getJWTTokenOfUser(
+            firebaseId: userUid,
+            type: authProvider.name,
+          );
 
-        await AuthLocalDataSource.setJwtToken(jwtToken);
-        await _authRemoteDataSource.updateFcmId(
-          firebaseId: userUid,
-          userLoggingOut: false,
-        );
+          if (jwtToken.isEmpty) {
+            throw const ApiException('JWT token is empty from server');
+          }
+
+          await AuthLocalDataSource.setJwtToken(jwtToken);
+          await _authRemoteDataSource.updateFcmId(
+            firebaseId: userUid,
+            userLoggingOut: false,
+          );
+        } catch (e) {
+          throw ApiException('Failed to get JWT token: ${e.toString()}');
+        }
       }
 
       return (user: user, isNewUser: isNewUser);

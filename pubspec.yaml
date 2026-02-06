@@ -5,7 +5,7 @@ version: 2.3.7+61
 
 # Release Version: 2.3.7 (do not remove or edit this)
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.9.0
 
 dependencies:
   app_tracking_transparency: ^2.0.6+1
@@ -30,7 +30,7 @@ dependencies:
   flutter_widget_from_html: ^0.17.1
   google_fonts: ^6.3.2
   google_mobile_ads: ^6.0.0
-  google_sign_in: ^7.2.0
+  google_sign_in: ^6.2.1
   hive_flutter: ^1.1.0
   http: 1.3.0
   iabtcf_consent_info: ^3.4.0

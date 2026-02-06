@@ -75,14 +75,14 @@ class QuizGridCard extends StatelessWidget {
                 child: Stack(
                   children: [
                     Column(
-                      crossAxisAlignment: .stretch,
-                      mainAxisSize: .min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         /// Title
                         Text(
                           title,
                           maxLines: 2,
-                          overflow: .ellipsis,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontWeight: FontWeights.semiBold,
                             fontSize: 18,
@@ -95,7 +95,7 @@ class QuizGridCard extends StatelessWidget {
                           child: Text(
                             desc,
                             maxLines: 2,
-                            overflow: .ellipsis,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeights.regular,
@@ -110,7 +110,7 @@ class QuizGridCard extends StatelessWidget {
 
                     /// Svg Icon
                     Align(
-                      alignment: iconOnRight ? .bottomRight : .bottomLeft,
+                      alignment: iconOnRight ? Alignment.bottomRight : Alignment.bottomLeft,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.transparent,
@@ -127,7 +127,7 @@ class QuizGridCard extends StatelessWidget {
                         child: QImage(
                           imageUrl: img,
                           color: iconColor,
-                          fit: .contain,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

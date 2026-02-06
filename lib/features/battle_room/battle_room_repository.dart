@@ -402,7 +402,7 @@ final class BattleRoomRepository {
         );
       }
 
-      return questions!.map(Question.fromJson).toList();
+      return questions?.map(Question.fromJson).toList() ?? [];
     } catch (e) {
       if (roomCreator) {
         //if any error occurs while fetching question deleteRoom

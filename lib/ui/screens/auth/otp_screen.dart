@@ -55,9 +55,24 @@ class _OtpScreen extends State<OtpScreen> {
 
   Future<void> signInWithPhoneNumber({required String phoneNumber}) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
-      timeout: const Duration(seconds: otpTimeOutSeconds),
+      timeout: const Duration(seconds: 120), // Increased timeout
       phoneNumber: '${selectedCountryCode!.dialCode} $phoneNumber',
-      verificationCompleted: (PhoneAuthCredential credential) {},
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // Auto-verification completed
+        try {
+          final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+          if (mounted) {
+            context.read<SignInCubit>().signInUser(
+              AuthProviders.mobile,
+              smsCode: credential.smsCode ?? '',
+              verificationId: userVerificationId,
+              appLanguage: context.read<AppLocalizationCubit>().activeLanguage.name,
+            );
+          }
+        } catch (e) {
+          // Handle auto-verification error
+        }
+      },
       verificationFailed: (FirebaseAuthException e) {
         //if otp code does not verify
 
@@ -86,7 +101,12 @@ class _OtpScreen extends State<OtpScreen> {
           resendOtpTimerContainerKey.currentState?.setResendOtpTimer();
         });
       },
-      codeAutoRetrievalTimeout: (String verificationId) {},
+      codeAutoRetrievalTimeout: (String verificationId) {
+        // Auto-retrieval timeout
+        setState(() {
+          userVerificationId = verificationId;
+        });
+      },
     );
   }
 

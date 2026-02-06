@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterquiz/commons/commons.dart';
 import 'package:flutterquiz/core/core.dart';
 import 'package:flutterquiz/features/ads/blocs/banner_ad_cubit.dart';
-import 'package:flutterquiz/features/ads/blocs/interstitial_ad_cubit.dart';
-import 'package:flutterquiz/features/ads/widgets/banner_ad_container.dart';
 import 'package:flutterquiz/features/profile_management/cubits/user_details_cubit.dart';
 import 'package:flutterquiz/features/quiz/cubits/quiz_category_cubit.dart';
 import 'package:flutterquiz/features/quiz/models/category.dart';

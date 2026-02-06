@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterquiz/core/core.dart';
 import 'package:flutterquiz/features/ads/blocs/banner_ad_cubit.dart';
-import 'package:flutterquiz/features/ads/widgets/banner_ad_container.dart';
 import 'package:flutterquiz/features/profile_management/cubits/user_details_cubit.dart';
 import 'package:flutterquiz/features/quiz/cubits/comprehension_cubit.dart';
 import 'package:flutterquiz/ui/screens/quiz/fun_and_learn_screen.dart';

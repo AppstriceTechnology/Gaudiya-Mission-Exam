@@ -48,7 +48,7 @@ final class Comprehension {
     detail: '',
     status: '',
     noOfQue: '',
-    contentType: .text,
+    contentType: ContentType.text,
     contentData: '',
   );
 

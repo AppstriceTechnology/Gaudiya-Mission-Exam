@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources />
+<resources>
+    <string name="default_web_client_id">446545585482-qs918gsuddmmefmkp58mvifupbhdlcud.apps.googleusercontent.com</string>
+</resources>

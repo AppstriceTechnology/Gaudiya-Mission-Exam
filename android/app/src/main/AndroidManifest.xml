@@ -48,6 +48,9 @@
             android:windowSoftInputMode="adjustResize"
             android:resizeableActivity="false"
             android:exported="true">
+            <meta-data
+                android:name="io.flutter.embedding.android.EnableSurfaceValidation"
+                android:value="true" />
             <!-- android:showWhenLocked="true"
             android:turnScreenOn="true"
             -->

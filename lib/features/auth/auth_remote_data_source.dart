@@ -13,7 +13,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthRemoteDataSource {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   //to addUser
   Future<Map<String, dynamic>> addUser({
@@ -67,7 +67,13 @@ class AuthRemoteDataSource {
       //body of post request
       final body = <String, String>{firebaseIdKey: firebaseId, typeKey: type};
 
+      print('Getting JWT Token - FirebaseId: $firebaseId, Type: $type');
+      print('API URL: $addUserUrl');
+      
       final response = await http.post(Uri.parse(addUserUrl), body: body);
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+      
       final responseJson = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (responseJson['error'] as bool) {
@@ -75,13 +81,17 @@ class AuthRemoteDataSource {
       }
       final data = responseJson['data'] as Map<String, dynamic>;
 
-      return data['api_token'].toString();
+      final token = data['api_token'].toString();
+      print('JWT Token received: ${token.isNotEmpty ? "Success" : "Empty"}');
+      
+      return token;
     } on SocketException {
       throw const ApiException(errorCodeNoInternet);
     } on ApiException {
       rethrow;
-    } on Exception {
-      throw const ApiException(errorCodeDefaultMessage);
+    } on Exception catch (e) {
+      print('Exception in getJWTTokenOfUser: $e');
+      throw ApiException('Failed to get JWT: ${e.toString()}');
     }
   }
 
@@ -189,20 +199,20 @@ class AuthRemoteDataSource {
 
   //signIn using google account
   Future<UserCredential> signInWithGoogle() async {
-    await _googleSignIn.initialize();
-    final googleUser = await _googleSignIn.authenticate(
-      scopeHint: ['email', 'profile'],
-    );
-    final googleAuth = googleUser.authentication;
-    final authClient = await googleUser.authorizationClient
-        .authorizationForScopes(['email', 'profile']);
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    
+    if (googleUser == null) {
+      throw const ApiException('Google sign in was cancelled');
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
     final credential = GoogleAuthProvider.credential(
-      accessToken: authClient?.accessToken,
+      accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    return _firebaseAuth.signInWithCredential(credential);
+    return await _firebaseAuth.signInWithCredential(credential);
   }
 
   Future<UserCredential> signInWithApple() async {
@@ -285,10 +295,14 @@ class AuthRemoteDataSource {
   }
 
   Future<void> signOut(AuthProviders? authProvider) async {
-    await _firebaseAuth.signOut();
-    if (authProvider == AuthProviders.gmail) {
-      await _googleSignIn.initialize();
-      await _googleSignIn.signOut();
+    try {
+      await _firebaseAuth.signOut();
+      if (authProvider == AuthProviders.gmail) {
+        await _googleSignIn.signOut();
+        await _googleSignIn.disconnect();
+      }
+    } catch (e) {
+      // Ignore sign out errors
     }
   }
 }

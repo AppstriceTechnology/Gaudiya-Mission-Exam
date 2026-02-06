@@ -91,7 +91,7 @@ class AuthRemoteDataSource {
       rethrow;
     } on Exception catch (e) {
       print('Exception in getJWTTokenOfUser: $e');
-      throw ApiException('Failed to get JWT: ${e.toString()}');
+      throw ApiException('Failed to get JWT: $e');
     }
   }
 
@@ -199,20 +199,20 @@ class AuthRemoteDataSource {
 
   //signIn using google account
   Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    final googleUser = await _googleSignIn.signIn();
     
     if (googleUser == null) {
       throw const ApiException('Google sign in was cancelled');
     }
 
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final googleAuth = await googleUser.authentication;
 
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    return await _firebaseAuth.signInWithCredential(credential);
+    return _firebaseAuth.signInWithCredential(credential);
   }
 
   Future<UserCredential> signInWithApple() async {

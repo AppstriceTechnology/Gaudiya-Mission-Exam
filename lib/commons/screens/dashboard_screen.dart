@@ -9,16 +9,11 @@ import 'package:flutterquiz/core/core.dart';
 import 'package:flutterquiz/features/auth/auth_repository.dart';
 import 'package:flutterquiz/features/auth/cubits/auth_cubit.dart';
 import 'package:flutterquiz/features/auth/cubits/refer_and_earn_cubit.dart';
-import 'package:flutterquiz/features/leaderboard/cubit/leaderboard_all_time_cubit.dart';
-import 'package:flutterquiz/features/leaderboard/cubit/leaderboard_daily_cubit.dart';
-import 'package:flutterquiz/features/leaderboard/cubit/leaderboard_monthly_cubit.dart';
 import 'package:flutterquiz/features/play_zone_tab/screens/play_zone_tab_screen.dart';
 import 'package:flutterquiz/features/profile_management/cubits/update_score_and_coins_cubit.dart';
 import 'package:flutterquiz/features/profile_management/cubits/update_user_details_cubit.dart';
 import 'package:flutterquiz/features/profile_management/profile_management_repository.dart';
 import 'package:flutterquiz/features/profile_tab/screens/profile_tab_screen.dart';
-import 'package:flutterquiz/features/quiz/cubits/quiz_category_cubit.dart';
-import 'package:flutterquiz/features/quiz/quiz_repository.dart';
 import 'package:flutterquiz/features/quiz_zone_tab/screens/quiz_zone_tab_screen.dart';
 import 'package:flutterquiz/features/system_config/cubits/system_config_cubit.dart';
 import 'package:flutterquiz/ui/screens/home/home_screen.dart';
@@ -95,43 +90,43 @@ class DashboardScreenState extends State<DashboardScreen> {
         child: HomeScreen(key: navTabsKeys[NavTabType.home]),
       ),
     ),
-    NavTab(
-      tab: NavTabType.leaderboard,
-      title: 'navLeaderBoard',
-      icon: Assets.leaderboardNavIcon,
-      activeIcon: Assets.leaderboardActiveNavIcon,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<LeaderBoardMonthlyCubit>(
-            create: (_) => LeaderBoardMonthlyCubit(),
-          ),
-          BlocProvider<LeaderBoardDailyCubit>(
-            create: (_) => LeaderBoardDailyCubit(),
-          ),
-          BlocProvider<LeaderBoardAllTimeCubit>(
-            create: (_) => LeaderBoardAllTimeCubit(),
-          ),
-        ],
-        child: LeaderBoardScreen(key: navTabsKeys[NavTabType.leaderboard]),
-      ),
-    ),
-    NavTab(
-      tab: NavTabType.quizZone,
-      title: 'navQuizZone',
-      icon: Assets.quizZoneNavIcon,
-      activeIcon: Assets.quizZoneActiveNavIcon,
-      child: BlocProvider(
-        create: (_) => QuizCategoryCubit(QuizRepository()),
-        child: QuizZoneTabScreen(key: navTabsKeys[NavTabType.quizZone]),
-      ),
-    ),
-    NavTab(
-      tab: NavTabType.playZone,
-      title: 'navPlayZone',
-      icon: Assets.playZoneNavIcon,
-      activeIcon: Assets.playZoneActiveNavIcon,
-      child: PlayZoneTabScreen(key: navTabsKeys[NavTabType.playZone]),
-    ),
+    // NavTab(
+    //   tab: NavTabType.leaderboard,
+    //   title: 'navLeaderBoard',
+    //   icon: Assets.leaderboardNavIcon,
+    //   activeIcon: Assets.leaderboardActiveNavIcon,
+    //   child: MultiBlocProvider(
+    //     providers: [
+    //       BlocProvider<LeaderBoardMonthlyCubit>(
+    //         create: (_) => LeaderBoardMonthlyCubit(),
+    //       ),
+    //       BlocProvider<LeaderBoardDailyCubit>(
+    //         create: (_) => LeaderBoardDailyCubit(),
+    //       ),
+    //       BlocProvider<LeaderBoardAllTimeCubit>(
+    //         create: (_) => LeaderBoardAllTimeCubit(),
+    //       ),
+    //     ],
+    //     child: LeaderBoardScreen(key: navTabsKeys[NavTabType.leaderboard]),
+    //   ),
+    // ),
+    // NavTab(
+    //   tab: NavTabType.quizZone,
+    //   title: 'navQuizZone',
+    //   icon: Assets.quizZoneNavIcon,
+    //   activeIcon: Assets.quizZoneActiveNavIcon,
+    //   child: BlocProvider(
+    //     create: (_) => QuizCategoryCubit(QuizRepository()),
+    //     child: QuizZoneTabScreen(key: navTabsKeys[NavTabType.quizZone]),
+    //   ),
+    // ),
+    // NavTab(
+    //   tab: NavTabType.playZone,
+    //   title: 'navPlayZone',
+    //   icon: Assets.playZoneNavIcon,
+    //   activeIcon: Assets.playZoneActiveNavIcon,
+    //   child: PlayZoneTabScreen(key: navTabsKeys[NavTabType.playZone]),
+    // ),
 
     NavTab(
       tab: NavTabType.profile,
@@ -209,46 +204,46 @@ class DashboardScreenState extends State<DashboardScreen> {
           child: HomeScreen(key: navTabsKeys[NavTabType.home]),
         ),
       ),
-      if (context.read<AuthCubit>().isLoggedIn)
-        NavTab(
-          tab: NavTabType.leaderboard,
-          title: 'navLeaderBoard',
-          icon: Assets.leaderboardNavIcon,
-          activeIcon: Assets.leaderboardActiveNavIcon,
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider<LeaderBoardMonthlyCubit>(
-                create: (_) => LeaderBoardMonthlyCubit(),
-              ),
-              BlocProvider<LeaderBoardDailyCubit>(
-                create: (_) => LeaderBoardDailyCubit(),
-              ),
-              BlocProvider<LeaderBoardAllTimeCubit>(
-                create: (_) => LeaderBoardAllTimeCubit(),
-              ),
-            ],
-            child: LeaderBoardScreen(key: navTabsKeys[NavTabType.leaderboard]),
-          ),
-        ),
-      if (config.isQuizZoneEnabled)
-        NavTab(
-          tab: NavTabType.quizZone,
-          title: 'navQuizZone',
-          icon: Assets.quizZoneNavIcon,
-          activeIcon: Assets.quizZoneActiveNavIcon,
-          child: BlocProvider(
-            create: (_) => QuizCategoryCubit(QuizRepository()),
-            child: QuizZoneTabScreen(key: navTabsKeys[NavTabType.quizZone]),
-          ),
-        ),
-      if (config.isPlayZoneEnabled)
-        NavTab(
-          tab: NavTabType.playZone,
-          title: 'navPlayZone',
-          icon: Assets.playZoneNavIcon,
-          activeIcon: Assets.playZoneActiveNavIcon,
-          child: PlayZoneTabScreen(key: navTabsKeys[NavTabType.playZone]),
-        ),
+      // if (context.read<AuthCubit>().isLoggedIn)
+      //   NavTab(
+      //     tab: NavTabType.leaderboard,
+      //     title: 'navLeaderBoard',
+      //     icon: Assets.leaderboardNavIcon,
+      //     activeIcon: Assets.leaderboardActiveNavIcon,
+      //     child: MultiBlocProvider(
+      //       providers: [
+      //         BlocProvider<LeaderBoardMonthlyCubit>(
+      //           create: (_) => LeaderBoardMonthlyCubit(),
+      //         ),
+      //         BlocProvider<LeaderBoardDailyCubit>(
+      //           create: (_) => LeaderBoardDailyCubit(),
+      //         ),
+      //         BlocProvider<LeaderBoardAllTimeCubit>(
+      //           create: (_) => LeaderBoardAllTimeCubit(),
+      //         ),
+      //       ],
+      //       child: LeaderBoardScreen(key: navTabsKeys[NavTabType.leaderboard]),
+      //     ),
+      //   ),
+      // if (config.isQuizZoneEnabled)
+      //   NavTab(
+      //     tab: NavTabType.quizZone,
+      //     title: 'navQuizZone',
+      //     icon: Assets.quizZoneNavIcon,
+      //     activeIcon: Assets.quizZoneActiveNavIcon,
+      //     child: BlocProvider(
+      //       create: (_) => QuizCategoryCubit(QuizRepository()),
+      //       child: QuizZoneTabScreen(key: navTabsKeys[NavTabType.quizZone]),
+      //     ),
+      //   ),
+      // if (config.isPlayZoneEnabled)
+      //   NavTab(
+      //     tab: NavTabType.playZone,
+      //     title: 'navPlayZone',
+      //     icon: Assets.playZoneNavIcon,
+      //     activeIcon: Assets.playZoneActiveNavIcon,
+      //     child: PlayZoneTabScreen(key: navTabsKeys[NavTabType.playZone]),
+      //   ),
       NavTab(
         tab: NavTabType.profile,
         title: 'navProfile',

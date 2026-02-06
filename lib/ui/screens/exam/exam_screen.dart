@@ -12,6 +12,7 @@ import 'package:flutterquiz/features/system_config/cubits/system_config_cubit.da
 import 'package:flutterquiz/features/system_config/model/answer_mode.dart';
 import 'package:flutterquiz/ui/screens/exam/widgets/exam_question_status_bottom_sheet_container.dart';
 import 'package:flutterquiz/ui/screens/exam/widgets/exam_timer_container.dart';
+import 'package:flutterquiz/ui/screens/home/result_coming_soon_screen.dart';
 import 'package:flutterquiz/ui/screens/quiz/widgets/question_container.dart';
 import 'package:flutterquiz/ui/widgets/custom_appbar.dart';
 import 'package:flutterquiz/ui/widgets/latex_answer_options_list.dart';
@@ -190,20 +191,25 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
 
     final userFirebaseId = context.read<UserDetailsCubit>().getUserFirebaseId();
     final examCubit = context.read<ExamCubit>();
-    Navigator.of(context).pushReplacementNamed(
-      Routes.result,
-      arguments: {
-        'quizType': QuizTypes.exam,
-        'exam': examCubit.getExam(),
-        'obtainedMarks': examCubit.obtainedMarks(userFirebaseId),
-        'timeTakenToCompleteQuiz': timerKey.currentState
-            ?.secondsTookToCompleteExam()
-            .toDouble(),
-        'correctExamAnswers': examCubit.correctAnswers(userFirebaseId),
-        'incorrectExamAnswers': examCubit.incorrectAnswers(userFirebaseId),
-        'numberOfPlayer': 1,
-      },
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.resultComingSoon,
     );
+
+    // Navigator.of(context).pushReplacementNamed(
+    //   Routes.result,
+    //   arguments: {
+    //     'quizType': QuizTypes.exam,
+    //     'exam': examCubit.getExam(),
+    //     'obtainedMarks': examCubit.obtainedMarks(userFirebaseId),
+    //     'timeTakenToCompleteQuiz': timerKey.currentState
+    //         ?.secondsTookToCompleteExam()
+    //         .toDouble(),
+    //     'correctExamAnswers': examCubit.correctAnswers(userFirebaseId),
+    //     'incorrectExamAnswers': examCubit.incorrectAnswers(userFirebaseId),
+    //     'numberOfPlayer': 1,
+    //   },
+    // );
   }
 
   Widget _buildBottomMenu() {

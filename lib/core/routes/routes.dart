@@ -19,6 +19,7 @@ import 'package:flutterquiz/ui/screens/battle/random_battle_screen.dart';
 import 'package:flutterquiz/ui/screens/bookmark_screen.dart';
 import 'package:flutterquiz/ui/screens/exam/exam_screen.dart';
 import 'package:flutterquiz/ui/screens/exam/exams_screen.dart';
+import 'package:flutterquiz/ui/screens/home/result_coming_soon_screen.dart';
 import 'package:flutterquiz/ui/screens/inapp_coin_store_screen.dart';
 import 'package:flutterquiz/ui/screens/initial_language_selection_screen.dart';
 import 'package:flutterquiz/ui/screens/notifications_screen.dart';
@@ -63,7 +64,7 @@ class Routes {
   static const multiMatchReviewScreen = '/multiMatchReviewScreen';
   static const subcategoryAndLevel = '/subcategoryAndLevel';
   static const subCategory = '/subCategory';
-
+  static const resultComingSoon = '/resultComingSoon';
   static const referAndEarn = '/referAndEarn';
   static const notification = '/notification';
   static const bookmark = '/bookmark';
@@ -150,6 +151,11 @@ class Routes {
         return RewardsScreen.route(rs);
       case referAndEarn:
         return ReferAndEarnScreen.route();
+      case resultComingSoon:
+        return CupertinoPageRoute(
+          builder: (_) => const ResultComingSoonScreen(),
+        );
+
       case result:
         return ResultScreen.route(rs);
       case reviewAnswers:

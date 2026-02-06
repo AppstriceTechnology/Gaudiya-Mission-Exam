@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutterquiz/commons/commons.dart';
 import 'package:flutterquiz/core/core.dart';
 import 'package:flutterquiz/features/ads/ads.dart';
@@ -32,7 +30,6 @@ import 'package:flutterquiz/ui/screens/quiz/category_screen.dart';
 import 'package:flutterquiz/ui/widgets/all.dart';
 import 'package:flutterquiz/utils/extensions.dart';
 import 'package:flutterquiz/utils/ui_utils.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -63,11 +60,11 @@ class HomeScreenState extends State<HomeScreen>
 
   final examZones = <ZoneType>[
     (title: 'exam', img: Assets.examQuizIcon, desc: 'desExam'),
-    (
-      title: 'selfChallenge',
-      img: Assets.selfChallengeIcon,
-      desc: 'challengeYourselfLbl',
-    ),
+    // (
+    // title: 'selfChallenge',
+    // img: Assets.selfChallengeIcon,
+    // desc: 'challengeYourselfLbl',
+    // ),
   ];
 
   // Screen dimensions
@@ -176,9 +173,10 @@ class HomeScreenState extends State<HomeScreen>
         examZones.removeWhere((e) => e.title == 'exam');
       }
 
-      if (!_sysConfigCubit.isSelfChallengeQuizEnabled) {
-        examZones.removeWhere((e) => e.title == 'selfChallenge');
-      }
+      // Self challenge is already commented out in examZones list
+      // if (!_sysConfigCubit.isSelfChallengeQuizEnabled) {
+      //   examZones.removeWhere((e) => e.title == 'selfChallenge');
+      // }
 
       if (!_sysConfigCubit.isGroupBattleEnabled) {
         battleZones.removeWhere((e) => e.title == 'groupPlay');
@@ -194,7 +192,6 @@ class HomeScreenState extends State<HomeScreen>
   }
 
   static StreamSubscription<RemoteMessage>? notificationStream;
-
   Future<void> setupInteractedMessage() async {
     if (Platform.isIOS) {
       await FirebaseMessaging.instance.requestPermission(
@@ -515,7 +512,7 @@ class HomeScreenState extends State<HomeScreen>
             padding: EdgeInsets.only(
               left: hzMargin,
               right: hzMargin,
-              top: scrHeight * 0.04,
+              top: scrHeight * 0.00,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -553,407 +550,407 @@ class HomeScreenState extends State<HomeScreen>
         : const SizedBox();
   }
 
-  Widget _buildDailyAds() {
-    var clicked = false;
-    return BlocBuilder<RewardedAdCubit, RewardedAdState>(
-      builder: (context, state) {
-        if (state is RewardedAdLoaded &&
-            context.read<UserDetailsCubit>().isDailyAdAvailable) {
-          return GestureDetector(
-            onTap: () async {
-              if (!clicked) {
-                await context.read<RewardedAdCubit>().showDailyAd(
-                  context: context,
-                );
-                clicked = true;
-              }
-            },
-            child: Container(
-              margin: EdgeInsets.only(
-                left: hzMargin,
-                right: hzMargin,
-                top: scrHeight * 0.02,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              width: scrWidth,
-              height: scrWidth * 0.3,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(
-                      Assets.dailyCoins,
-                      width: scrWidth * .23,
-                      height: scrWidth * .23,
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 250),
-                        child: Text(
-                          context.tr('dailyAdsTitle')!,
-                          maxLines: 2,
-                          style: TextStyle(
-                            fontWeight: FontWeights.bold,
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.onTertiary,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "${context.tr("get")!} "
-                        '${_sysConfigCubit.coinsPerDailyAdView} '
-                        "${context.tr("dailyAdsDesc")!}",
-                        style: TextStyle(
-                          fontWeight: FontWeights.regular,
-                          fontSize: 14,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onTertiary.withValues(alpha: .6),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
+  // Widget _buildDailyAds() {
+  //   var clicked = false;
+  //   return BlocBuilder<RewardedAdCubit, RewardedAdState>(
+  //     builder: (context, state) {
+  //       if (state is RewardedAdLoaded &&
+  //           context.read<UserDetailsCubit>().isDailyAdAvailable) {
+  //         return GestureDetector(
+  //           onTap: () async {
+  //             if (!clicked) {
+  //               await context.read<RewardedAdCubit>().showDailyAd(
+  //                 context: context,
+  //               );
+  //               clicked = true;
+  //             }
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.only(
+  //               left: hzMargin,
+  //               right: hzMargin,
+  //               top: scrHeight * 0.02,
+  //             ),
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(8),
+  //               color: Theme.of(context).colorScheme.surface,
+  //             ),
+  //             width: scrWidth,
+  //             height: scrWidth * 0.3,
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: [
+  //                 DecoratedBox(
+  //                   decoration: BoxDecoration(
+  //                     color: Theme.of(context).primaryColor,
+  //                     shape: BoxShape.circle,
+  //                   ),
+  //                   child: SvgPicture.asset(
+  //                     Assets.dailyCoins,
+  //                     width: scrWidth * .23,
+  //                     height: scrWidth * .23,
+  //                   ),
+  //                 ),
+  //                 Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     ConstrainedBox(
+  //                       constraints: const BoxConstraints(maxWidth: 250),
+  //                       child: Text(
+  //                         context.tr('dailyAdsTitle')!,
+  //                         maxLines: 2,
+  //                         style: TextStyle(
+  //                           fontWeight: FontWeights.bold,
+  //                           fontSize: 16,
+  //                           color: Theme.of(context).colorScheme.onTertiary,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     const SizedBox(height: 5),
+  //                     Text(
+  //                       "${context.tr("get")!} "
+  //                       '${_sysConfigCubit.coinsPerDailyAdView} '
+  //                       "${context.tr("dailyAdsDesc")!}",
+  //                       style: TextStyle(
+  //                         fontWeight: FontWeights.regular,
+  //                         fontSize: 14,
+  //                         color: Theme.of(
+  //                           context,
+  //                         ).colorScheme.onTertiary.withValues(alpha: .6),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       }
+  //
+  //       return const SizedBox.shrink();
+  //     },
+  //   );
+  // }
 
-        return const SizedBox.shrink();
-      },
-    );
-  }
-
-  Widget _buildLiveContestSection() {
-    void onTapViewAll() {
-      if (_sysConfigCubit.isContestEnabled) {
-        Navigator.of(context).pushNamed(Routes.contest);
-      } else {
-        context.showSnack(context.tr(currentlyNotAvailableKey)!);
-      }
-    }
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: hzMargin, vertical: 10),
-      child: Column(
-        children: [
-          /// Contest Section Title
-          Row(
-            children: [
-              Text(
-                context.tr(contest) ?? contest,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeights.semiBold,
-                  color: context.primaryTextColor,
-                ),
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: onTapViewAll,
-                child: Text(
-                  context.tr(viewAllKey) ?? viewAllKey,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeights.semiBold,
-                    color: context.primaryTextColor.withValues(alpha: 0.3),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          /// Contest Card
-          BlocConsumer<ContestCubit, ContestState>(
-            bloc: context.read<ContestCubit>(),
-            listener: (context, state) {
-              if (state is ContestFailure) {
-                if (state.errorMessage == errorCodeUnauthorizedAccess) {
-                  showAlreadyLoggedInDialog(context);
-                }
-              }
-            },
-            builder: (context, state) {
-              if (state is ContestFailure) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  height: 100,
-                  alignment: Alignment.center,
-                  child: Text(
-                    context.tr(
-                      convertErrorCodeToLanguageKey(state.errorMessage),
-                    )!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeights.regular,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    maxLines: 2,
-                  ),
-                );
-              }
-
-              if (state is ContestSuccess) {
-                final colorScheme = Theme.of(context).colorScheme;
-                final textStyle = GoogleFonts.nunito(
-                  textStyle: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeights.regular,
-                    color: colorScheme.onTertiary.withValues(alpha: 0.6),
-                  ),
-                );
-
-                ///
-                final live = state.contestList.live;
-
-                /// No Contest
-                if (live.errorMessage.isNotEmpty) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    height: 100,
-                    alignment: Alignment.center,
-                    child: Text(
-                      context.tr(
-                        convertErrorCodeToLanguageKey(live.errorMessage),
-                      )!,
-                      style: _boldTextStyle.copyWith(
-                        fontSize: 16,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  );
-                }
-
-                final contest = live.contestDetails.first;
-                final entryFee = int.parse(contest.entry!);
-
-                void onTapPlayNow() {
-                  final userDetailsCubit = context.read<UserDetailsCubit>();
-
-                  if (int.parse(userDetailsCubit.getCoins()!) >= entryFee) {
-                    context.read<UpdateCoinsCubit>().updateCoins(
-                      coins: entryFee,
-                      addCoin: false,
-                      title: playedContestKey,
-                    );
-                    userDetailsCubit.updateCoins(
-                      addCoin: false,
-                      coins: entryFee,
-                    );
-
-                    Navigator.of(globalCtx).pushNamed(
-                      Routes.quiz,
-                      arguments: {
-                        'quizType': QuizTypes.contest,
-                        'contestId': contest.id,
-                      },
-                    );
-                  } else {
-                    showNotEnoughCoinsDialog(context);
-                  }
-                }
-
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 5),
-                        blurRadius: 5,
-                        color: Colors.black12,
-                      ),
-                    ],
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(99999),
-                    ),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.all(12.5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// Contest Image
-                            Container(
-                              padding: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Theme.of(
-                                    context,
-                                  ).scaffoldBackgroundColor,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child: QImage(
-                                  imageUrl: contest.image!,
-                                  height: 45,
-                                  width: 45,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-
-                            /// Contest Name & Description
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    contest.name.toString(),
-                                    textAlign: TextAlign.start,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: _boldTextStyle.copyWith(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Text(
-                                    contest.description.toString(),
-                                    softWrap: true,
-                                    textAlign: TextAlign.start,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: textStyle,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-
-                        ///
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                /// Entry Fees
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: context.tr('entryFeesLbl'),
-                                      ),
-                                      const TextSpan(text: ' : '),
-                                      TextSpan(
-                                        text:
-                                            "$entryFee ${context.tr("coinsLbl")!}",
-                                        style: textStyle.copyWith(
-                                          color: colorScheme.onTertiary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  style: textStyle,
-                                ),
-                                const SizedBox(height: 5),
-
-                                /// Ends on
-                                Text.rich(
-                                  style: textStyle,
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(text: context.tr('endsOnLbl')),
-                                      const TextSpan(text: ' : '),
-                                      TextSpan(
-                                        text: '${contest.endDate}  |  ',
-                                        style: textStyle.copyWith(
-                                          color: colorScheme.onTertiary,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: contest.participants.toString(),
-                                        style: textStyle.copyWith(
-                                          color: colorScheme.onTertiary,
-                                        ),
-                                      ),
-                                      const TextSpan(text: ' : '),
-                                      TextSpan(text: context.tr('playersLbl')),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 15),
-
-                            /// Play Now
-                            GestureDetector(
-                              onTap: onTapPlayNow,
-                              child: Container(
-                                width: double.maxFinite,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                  horizontal: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Theme.of(
-                                    context,
-                                  ).scaffoldBackgroundColor,
-                                ),
-                                child: Text(
-                                  context.tr('playnowLbl')!,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              return const Center(child: CircularProgressContainer());
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildLiveContestSection() {
+  //   void onTapViewAll() {
+  //     if (_sysConfigCubit.isContestEnabled) {
+  //       Navigator.of(context).pushNamed(Routes.contest);
+  //     } else {
+  //       context.showSnack(context.tr(currentlyNotAvailableKey)!);
+  //     }
+  //   }
+  //
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(horizontal: hzMargin, vertical: 10),
+  //     child: Column(
+  //       children: [
+  //         /// Contest Section Title
+  //         Row(
+  //           children: [
+  //             Text(
+  //               context.tr(contest) ?? contest,
+  //               textAlign: TextAlign.start,
+  //               style: TextStyle(
+  //                 fontSize: 20,
+  //                 fontWeight: FontWeights.semiBold,
+  //                 color: context.primaryTextColor,
+  //               ),
+  //             ),
+  //             const Spacer(),
+  //             GestureDetector(
+  //               onTap: onTapViewAll,
+  //               child: Text(
+  //                 context.tr(viewAllKey) ?? viewAllKey,
+  //                 textAlign: TextAlign.end,
+  //                 style: TextStyle(
+  //                   fontSize: 14,
+  //                   fontWeight: FontWeights.semiBold,
+  //                   color: context.primaryTextColor.withValues(alpha: 0.3),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 10),
+  //
+  //         /// Contest Card
+  //         BlocConsumer<ContestCubit, ContestState>(
+  //           bloc: context.read<ContestCubit>(),
+  //           listener: (context, state) {
+  //             if (state is ContestFailure) {
+  //               if (state.errorMessage == errorCodeUnauthorizedAccess) {
+  //                 showAlreadyLoggedInDialog(context);
+  //               }
+  //             }
+  //           },
+  //           builder: (context, state) {
+  //             if (state is ContestFailure) {
+  //               return Container(
+  //                 decoration: BoxDecoration(
+  //                   color: Theme.of(context).colorScheme.surface,
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //                 height: 100,
+  //                 alignment: Alignment.center,
+  //                 child: Text(
+  //                   context.tr(
+  //                     convertErrorCodeToLanguageKey(state.errorMessage),
+  //                   )!,
+  //                   textAlign: TextAlign.center,
+  //                   style: TextStyle(
+  //                     fontSize: 16,
+  //                     fontWeight: FontWeights.regular,
+  //                     color: Theme.of(context).primaryColor,
+  //                   ),
+  //                   maxLines: 2,
+  //                 ),
+  //               );
+  //             }
+  //
+  //             if (state is ContestSuccess) {
+  //               final colorScheme = Theme.of(context).colorScheme;
+  //               final textStyle = GoogleFonts.nunito(
+  //                 textStyle: TextStyle(
+  //                   fontSize: 14,
+  //                   fontWeight: FontWeights.regular,
+  //                   color: colorScheme.onTertiary.withValues(alpha: 0.6),
+  //                 ),
+  //               );
+  //
+  //               ///
+  //               final live = state.contestList.live;
+  //
+  //               /// No Contest
+  //               if (live.errorMessage.isNotEmpty) {
+  //                 return Container(
+  //                   decoration: BoxDecoration(
+  //                     color: colorScheme.surface,
+  //                     borderRadius: BorderRadius.circular(10),
+  //                   ),
+  //                   height: 100,
+  //                   alignment: Alignment.center,
+  //                   child: Text(
+  //                     context.tr(
+  //                       convertErrorCodeToLanguageKey(live.errorMessage),
+  //                     )!,
+  //                     style: _boldTextStyle.copyWith(
+  //                       fontSize: 16,
+  //                       color: Theme.of(context).primaryColor,
+  //                     ),
+  //                   ),
+  //                 );
+  //               }
+  //
+  //               final contest = live.contestDetails.first;
+  //               final entryFee = int.parse(contest.entry!);
+  //
+  //               void onTapPlayNow() {
+  //                 final userDetailsCubit = context.read<UserDetailsCubit>();
+  //
+  //                 if (int.parse(userDetailsCubit.getCoins()!) >= entryFee) {
+  //                   context.read<UpdateCoinsCubit>().updateCoins(
+  //                     coins: entryFee,
+  //                     addCoin: false,
+  //                     title: playedContestKey,
+  //                   );
+  //                   userDetailsCubit.updateCoins(
+  //                     addCoin: false,
+  //                     coins: entryFee,
+  //                   );
+  //
+  //                   Navigator.of(globalCtx).pushNamed(
+  //                     Routes.quiz,
+  //                     arguments: {
+  //                       'quizType': QuizTypes.contest,
+  //                       'contestId': contest.id,
+  //                     },
+  //                   );
+  //                 } else {
+  //                   showNotEnoughCoinsDialog(context);
+  //                 }
+  //               }
+  //
+  //               return Container(
+  //                 decoration: const BoxDecoration(
+  //                   color: Colors.transparent,
+  //                   boxShadow: [
+  //                     BoxShadow(
+  //                       offset: Offset(0, 5),
+  //                       blurRadius: 5,
+  //                       color: Colors.black12,
+  //                     ),
+  //                   ],
+  //                   borderRadius: BorderRadius.vertical(
+  //                     bottom: Radius.circular(99999),
+  //                   ),
+  //                 ),
+  //                 child: Container(
+  //                   decoration: BoxDecoration(
+  //                     color: colorScheme.surface,
+  //                     borderRadius: BorderRadius.circular(10),
+  //                   ),
+  //                   padding: const EdgeInsets.all(12.5),
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       Row(
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           /// Contest Image
+  //                           Container(
+  //                             padding: const EdgeInsets.all(5),
+  //                             decoration: BoxDecoration(
+  //                               color: Colors.transparent,
+  //                               borderRadius: BorderRadius.circular(10),
+  //                               border: Border.all(
+  //                                 color: Theme.of(
+  //                                   context,
+  //                                 ).scaffoldBackgroundColor,
+  //                               ),
+  //                             ),
+  //                             child: ClipRRect(
+  //                               borderRadius: BorderRadius.circular(5),
+  //                               child: QImage(
+  //                                 imageUrl: contest.image!,
+  //                                 height: 45,
+  //                                 width: 45,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           const SizedBox(width: 8),
+  //
+  //                           /// Contest Name & Description
+  //                           Expanded(
+  //                             child: Column(
+  //                               crossAxisAlignment: CrossAxisAlignment.start,
+  //                               children: [
+  //                                 Text(
+  //                                   contest.name.toString(),
+  //                                   textAlign: TextAlign.start,
+  //                                   overflow: TextOverflow.ellipsis,
+  //                                   maxLines: 2,
+  //                                   style: _boldTextStyle.copyWith(
+  //                                     fontSize: 16,
+  //                                   ),
+  //                                 ),
+  //                                 Text(
+  //                                   contest.description.toString(),
+  //                                   softWrap: true,
+  //                                   textAlign: TextAlign.start,
+  //                                   overflow: TextOverflow.ellipsis,
+  //                                   maxLines: 2,
+  //                                   style: textStyle,
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       const SizedBox(height: 10),
+  //
+  //                       ///
+  //                       Column(
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           Column(
+  //                             crossAxisAlignment: CrossAxisAlignment.start,
+  //                             children: [
+  //                               /// Entry Fees
+  //                               Text.rich(
+  //                                 TextSpan(
+  //                                   children: [
+  //                                     TextSpan(
+  //                                       text: context.tr('entryFeesLbl'),
+  //                                     ),
+  //                                     const TextSpan(text: ' : '),
+  //                                     TextSpan(
+  //                                       text:
+  //                                           "$entryFee ${context.tr("coinsLbl")!}",
+  //                                       style: textStyle.copyWith(
+  //                                         color: colorScheme.onTertiary,
+  //                                       ),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                                 style: textStyle,
+  //                               ),
+  //                               const SizedBox(height: 5),
+  //
+  //                               /// Ends on
+  //                               Text.rich(
+  //                                 style: textStyle,
+  //                                 TextSpan(
+  //                                   children: [
+  //                                     TextSpan(text: context.tr('endsOnLbl')),
+  //                                     const TextSpan(text: ' : '),
+  //                                     TextSpan(
+  //                                       text: '${contest.endDate}  |  ',
+  //                                       style: textStyle.copyWith(
+  //                                         color: colorScheme.onTertiary,
+  //                                       ),
+  //                                     ),
+  //                                     TextSpan(
+  //                                       text: contest.participants.toString(),
+  //                                       style: textStyle.copyWith(
+  //                                         color: colorScheme.onTertiary,
+  //                                       ),
+  //                                     ),
+  //                                     const TextSpan(text: ' : '),
+  //                                     TextSpan(text: context.tr('playersLbl')),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //
+  //                           const SizedBox(height: 15),
+  //
+  //                           /// Play Now
+  //                           GestureDetector(
+  //                             onTap: onTapPlayNow,
+  //                             child: Container(
+  //                               width: double.maxFinite,
+  //                               padding: const EdgeInsets.symmetric(
+  //                                 vertical: 8,
+  //                                 horizontal: 5,
+  //                               ),
+  //                               decoration: BoxDecoration(
+  //                                 borderRadius: BorderRadius.circular(8),
+  //                                 color: Theme.of(
+  //                                   context,
+  //                                 ).scaffoldBackgroundColor,
+  //                               ),
+  //                               child: Text(
+  //                                 context.tr('playnowLbl')!,
+  //                                 maxLines: 1,
+  //                                 textAlign: TextAlign.center,
+  //                                 style: TextStyle(
+  //                                   fontSize: 16,
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: Theme.of(context).primaryColor,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               );
+  //             }
+  //
+  //             return const Center(child: CircularProgressContainer());
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   String _userRank = '0';
   String _userCoins = '0';
@@ -1003,22 +1000,22 @@ class HomeScreenState extends State<HomeScreen>
                         controller: _scrollController,
                         children: [
                           const SizedBox(height: 24),
-                          UserAchievements(
-                            userRank: _userRank,
-                            userCoins: _userCoins,
-                            userScore: _userScore,
-                          ),
-                          const SizedBox(height: 16),
-                          if (!_isGuest &&
-                              _sysConfigCubit.isAdsEnable &&
-                              _sysConfigCubit.isDailyAdsEnabled) ...[
-                            _buildDailyAds(),
-                          ],
-                          if (!_isGuest &&
-                              _sysConfigCubit.isContestEnabled) ...[
-                            _buildLiveContestSection(),
-                          ],
-                          _buildBattle(),
+                          // UserAchievements(
+                          //   userRank: _userRank,
+                          //   userCoins: _userCoins,
+                          //   userScore: _userScore,
+                          // ),
+                          // const SizedBox(height: 16),
+                          // if (!_isGuest &&
+                          //     _sysConfigCubit.isAdsEnable &&
+                          //     _sysConfigCubit.isDailyAdsEnabled) ...[
+                          //   _buildDailyAds(),
+                          // ],
+                          // if (!_isGuest &&
+                          //     _sysConfigCubit.isContestEnabled) ...[
+                          //   _buildLiveContestSection(),
+                          // ],
+                          // _buildBattle(),
                           _buildExamSelf(),
                           const SizedBox(height: 32),
                         ],
@@ -1163,28 +1160,28 @@ class HomeScreenState extends State<HomeScreen>
                           ),
                   ),
                 ),
-                if (_sysConfigCubit.isCoinStoreEnabled) ...[
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: onTapCoinStore,
-                    child: Container(
-                      width: iconSize,
-                      height: iconSize,
-                      decoration: BoxDecoration(
-                        color: context.primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      alignment: Alignment.center,
-                      child: QImage(
-                        imageUrl: Assets.coinMenuIcon,
-                        color: context.surfaceColor,
-                        height: 20,
-                        width: 20,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ],
+                // if (_sysConfigCubit.isCoinStoreEnabled) ...[
+                //   const SizedBox(width: 8),
+                //   InkWell(
+                //     onTap: onTapCoinStore,
+                //     child: Container(
+                //       width: iconSize,
+                //       height: iconSize,
+                //       decoration: BoxDecoration(
+                //         color: context.primaryColor,
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //       alignment: Alignment.center,
+                //       child: QImage(
+                //         imageUrl: Assets.coinMenuIcon,
+                //         color: context.surfaceColor,
+                //         height: 20,
+                //         width: 20,
+                //         fit: BoxFit.contain,
+                //       ),
+                //     ),
+                //   ),
+                // ],
               ],
             ),
           ),

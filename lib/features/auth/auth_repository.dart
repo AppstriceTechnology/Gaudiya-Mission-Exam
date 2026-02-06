@@ -130,7 +130,7 @@ class AuthRepository {
             userLoggingOut: false,
           );
         } catch (e) {
-          throw ApiException('Failed to get JWT token: ${e.toString()}');
+          throw ApiException('Failed to get JWT token: $e');
         }
       }
 

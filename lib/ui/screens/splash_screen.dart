@@ -1,12 +1,6 @@
-// AdFormat is deprecated by IronSource and will be removed in SDK 4.0.0.
-// Ignoring for now until IronSource provides official migration documentation.
-// TODO(J): Update when IronSource SDK 4.0.0 is released with replacement API.
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +33,8 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _logoAnimationController;
   late Animation<double> _logoScaleUpAnimation;
   late Animation<double> _logoScaleDownAnimation;
+  late Animation<double> _logoOpacityAnimation;
+  late Animation<double> _borderRadiusAnimation;
 
   bool _systemConfigLoaded = false;
 
@@ -54,13 +50,13 @@ class _SplashScreenState extends State<SplashScreen>
     Future.delayed(Duration.zero, () async {
       await _initLanguage()
           .then((_) async {
-            await _fetchSystemConfig();
-          })
+        await _fetchSystemConfig();
+      })
           .catchError((Object? e) {
-            setState(() {
-              languageError = e.toString();
-            });
-          });
+        setState(() {
+          languageError = e.toString();
+        });
+      });
     });
     _initAnimations();
   }
@@ -77,24 +73,43 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _initAnimations() {
     _logoAnimationController =
-        AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 700),
-        )..addListener(() {
-          if (_logoAnimationController.isCompleted) {
-            _navigateToNextScreen();
-          }
-        });
+    AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..addListener(() {
+      if (_logoAnimationController.isCompleted) {
+        _navigateToNextScreen();
+      }
+    });
+
     _logoScaleUpAnimation = Tween<double>(begin: 0, end: 1.1).animate(
       CurvedAnimation(
         parent: _logoAnimationController,
         curve: const Interval(0, 0.4, curve: Curves.ease),
       ),
     );
+
+    // Scale down from 0 to 0.1
     _logoScaleDownAnimation = Tween<double>(begin: 0, end: 0.1).animate(
       CurvedAnimation(
         parent: _logoAnimationController,
         curve: const Interval(0.4, 1, curve: Curves.easeInOut),
+      ),
+    );
+
+    // Fade in opacity
+    _logoOpacityAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _logoAnimationController,
+        curve: const Interval(0, 0.3, curve: Curves.easeIn),
+      ),
+    );
+
+    // Border radius animation - starts as circle and becomes square
+    _borderRadiusAnimation = Tween<double>(begin: 1000, end: 0).animate(
+      CurvedAnimation(
+        parent: _logoAnimationController,
+        curve: const Interval(0.1, 0.5, curve: Curves.easeOutCirc),
       ),
     );
 
@@ -225,7 +240,7 @@ class _SplashScreenState extends State<SplashScreen>
       },
       builder: (context, state) {
         final systemUiOverlayStyle =
-            (context.read<ThemeCubit>().state == Brightness.light
+        (context.read<ThemeCubit>().state == Brightness.light
             ? SystemUiOverlayStyle.dark
             : SystemUiOverlayStyle.light);
 
@@ -245,12 +260,12 @@ class _SplashScreenState extends State<SplashScreen>
                   onTapRetry: () {
                     _initLanguage()
                         .then((_) {
-                          languageError = '';
-                          _fetchSystemConfig();
-                        })
+                      languageError = '';
+                      _fetchSystemConfig();
+                    })
                         .catchError((Object? e) {
-                          languageError = e.toString();
-                        });
+                      languageError = e.toString();
+                    });
                     setState(_initAnimations);
                   },
                   showErrorImage: true,
@@ -293,35 +308,40 @@ class _SplashScreenState extends State<SplashScreen>
             body: SizedBox.expand(
               child: Stack(
                 children: [
-                  /// App Logo
-                  Align(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 100),
-                      child: AnimatedBuilder(
-                        animation: _logoAnimationController,
-                        builder: (_, _) => Transform.scale(
-                          scale:
-                              _logoScaleUpAnimation.value -
-                              _logoScaleDownAnimation.value,
-                          child: QImage(
-                            imageUrl: _appLogoPath,
-                            fit: BoxFit.contain,
+                  /// App Logo with circular animation
+                  Center(
+                    child: AnimatedBuilder(
+                      animation: _logoAnimationController,
+                      builder: (context, child) {
+                        return Opacity(
+                          opacity: _logoOpacityAnimation.value,
+                          child: Transform.scale(
+                            scale: _logoScaleUpAnimation.value -
+                                _logoScaleDownAnimation.value,
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  _borderRadiusAnimation.value,
+                                ),
+                                color: Colors.transparent,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  _borderRadiusAnimation.value,
+                                ),
+                                child: QImage(
+                                  imageUrl: _appLogoPath,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
-
-                  /// Organization Logo
-                  if (showCompanyLogo) ...[
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 22),
-                        child: QImage(imageUrl: _orgLogoPath),
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

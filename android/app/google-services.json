@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "446545585482-l74esvvl4gosdvktvf2ghlhmoruaghg7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gaudiyamission.exam",
+            "certificate_hash": "166936858b28a9eb6c433ce0dea19c4629901a2a"
+          }
+        },
+        {
           "client_id": "446545585482-qs918gsuddmmefmkp58mvifupbhdlcud.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -57,6 +65,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "446545585482-7lp1lo84erkjkcmcm7fpvfbje2e0snbt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wrteam.flutterquiz",
+            "certificate_hash": "166936858b28a9eb6c433ce0dea19c4629901a2a"
+          }
+        },
         {
           "client_id": "446545585482-rn4h5s8cg8ptgltg0a5schrlin4n3n9r.apps.googleusercontent.com",
           "client_type": 1,

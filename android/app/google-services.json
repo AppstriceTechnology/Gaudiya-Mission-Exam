@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "446545585482-ti2b4a7aag2mb1tjg4uv58n38urngcdt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gaudiyamission.exam",
+            "certificate_hash": "24e8d82b0662a650411133e17d4880b486787eaf"
+          }
+        },
+        {
           "client_id": "446545585482-qs918gsuddmmefmkp58mvifupbhdlcud.apps.googleusercontent.com",
           "client_type": 3
         }

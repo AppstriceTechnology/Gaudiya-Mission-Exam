@@ -7,6 +7,20 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const QImage(imageUrl: Assets.appLogo);
+    return Center(
+      child: Container(
+        width: 140,
+        height: 140,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+        ),
+        child: const ClipOval(
+          child: QImage(
+            imageUrl: Assets.appLogo,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
   }
 }

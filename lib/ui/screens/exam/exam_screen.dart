@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterquiz/commons/commons.dart';
 import 'package:flutterquiz/core/core.dart';
@@ -12,7 +14,6 @@ import 'package:flutterquiz/features/system_config/cubits/system_config_cubit.da
 import 'package:flutterquiz/features/system_config/model/answer_mode.dart';
 import 'package:flutterquiz/ui/screens/exam/widgets/exam_question_status_bottom_sheet_container.dart';
 import 'package:flutterquiz/ui/screens/exam/widgets/exam_timer_container.dart';
-import 'package:flutterquiz/ui/screens/home/result_coming_soon_screen.dart';
 import 'package:flutterquiz/ui/screens/quiz/widgets/question_container.dart';
 import 'package:flutterquiz/ui/widgets/custom_appbar.dart';
 import 'package:flutterquiz/ui/widgets/latex_answer_options_list.dart';
@@ -21,6 +22,7 @@ import 'package:flutterquiz/utils/answer_encryption.dart';
 import 'package:flutterquiz/utils/extensions.dart';
 import 'package:flutterquiz/utils/ui_utils.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:screen_protector/screen_protector.dart';
 
 class ExamScreen extends StatefulWidget {
   const ExamScreen({super.key});
@@ -50,6 +52,11 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
 
   bool showYouLeftTheExam = false;
   bool isExamQuestionStatusBottomSheetOpen = false;
+  bool showSecurityWarning = false;
+  String securityWarningMessage = '';
+
+  int appMinimizeCount = 0;
+  bool isWarningDialogOpen = false;
 
   int currentQuestionIndex = 0;
 
@@ -66,15 +73,42 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
     super.initState();
 
     //wake lock enable so phone will not lock automatically after sometime
-
     WakelockPlus.enable();
 
     WidgetsBinding.instance.addObserver(this);
+
+    // Enable security features
+    _enableSecurityFeatures();
+
+    // Disable copy/paste
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
 
     //start timer
     Future.delayed(Duration.zero, () {
       timerKey.currentState?.startTimer();
     });
+  }
+
+  Future<void> _enableSecurityFeatures() async {
+    try {
+      // Screenshot and screen recording blocking for both Android & iOS
+      await ScreenProtector.protectDataLeakageOn();
+      
+      // Additional protection with blur for iOS
+      if (Platform.isIOS) {
+        await ScreenProtector.protectDataLeakageWithBlur();
+      }
+    } catch (e) {
+      debugPrint('Security features error: $e');
+    }
+  }
+
+  Future<void> _disableSecurityFeatures() async {
+    try {
+      await ScreenProtector.protectDataLeakageOff();
+    } catch (e) {
+      debugPrint('Disable security error: $e');
+    }
   }
 
   void iosScreenshotCallback() {
@@ -108,10 +142,39 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState appState) {
     if (appState == AppLifecycleState.paused) {
+      appMinimizeCount++;
+
+      if (appMinimizeCount >= 3) {
+        // Third time - Auto submit
+        if (!showYouLeftTheExam && !isExitDialogOpen) {
+          setState(() {
+            showSecurityWarning = true;
+            securityWarningMessage = 'Exam auto-submitted! You minimized 3 times.';
+          });
+          
+          Future.delayed(const Duration(seconds: 2), () {
+            submitResult();
+            if (mounted) {
+              Navigator.of(context)
+                ..pop()
+                ..pop();
+            }
+          });
+        }
+      }
       setCanGiveExamTimer();
     } else if (appState == AppLifecycleState.resumed) {
       canGiveExamAgainTimer?.cancel();
-      //if user can give exam again
+      
+      // Show warning dialog on resume (for 1st and 2nd time)
+      if (appMinimizeCount > 0 && appMinimizeCount < 3 && !isWarningDialogOpen) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            showAppMinimizeWarningDialog();
+          }
+        });
+      }
+
       if (canGiveExamAgain) {
         canGiveExamAgainTimeInSeconds = context
             .read<SystemConfigCubit>()
@@ -125,6 +188,7 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
     canGiveExamAgainTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     WakelockPlus.disable();
+    _disableSecurityFeatures();
     super.dispose();
   }
 
@@ -214,22 +278,27 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
 
   Widget _buildBottomMenu() {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.width * UiUtils.hzMarginPct,
+      padding: EdgeInsets.fromLTRB(
+        context.width * UiUtils.hzMarginPct,
+        0,
+        context.width * UiUtils.hzMarginPct,
+        40,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Previous Button
           Container(
             height: 45,
             width: 45,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onTertiary.withValues(alpha: 0.2),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onTertiary
+                    .withValues(alpha: 0.2),
               ),
             ),
             margin: const EdgeInsets.only(bottom: 20),
@@ -251,6 +320,8 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
               ),
             ),
           ),
+
+          // Middle Bottom Sheet Button
           Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.vertical(
@@ -268,22 +339,25 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
               ),
             ),
           ),
+
+          // Next Button
           Container(
             height: 45,
             width: 45,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onTertiary.withValues(alpha: 0.2),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onTertiary
+                    .withValues(alpha: 0.2),
               ),
             ),
             margin: const EdgeInsets.only(bottom: 20),
             child: Opacity(
               opacity:
-                  (context.read<ExamCubit>().getQuestions().length - 1) !=
-                      currentQuestionIndex
+              (context.read<ExamCubit>().getQuestions().length - 1) !=
+                  currentQuestionIndex
                   ? 1.0
                   : 0.5,
               child: IconButton(
@@ -304,6 +378,54 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+
+  Widget _buildSecurityWarning() {
+    if (showSecurityWarning) {
+      return Container(
+        width: context.width,
+        height: context.height,
+        color: Colors.red.withOpacity(0.95),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.warning_amber_rounded, size: 100, color: Colors.white),
+            const SizedBox(height: 20),
+            Text(
+              securityWarningMessage,
+              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+    return const SizedBox();
+  }
+
+  Widget _buildSecurityIndicators() {
+    return Positioned(
+      top: 10,
+      right: 10,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.security, color: Colors.white, size: 16),
+            const SizedBox(width: 4),
+            const Icon(Icons.block, color: Colors.white, size: 16),
+            const SizedBox(width: 4),
+            const Icon(Icons.videocam_off, color: Colors.white, size: 16),
+          ],
+        ),
       ),
     );
   }
@@ -437,24 +559,144 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
           ),
           onTapBackButton: onTapBackButton,
         ),
-        body: Stack(
-          children: [
-            _buildQuestions(),
-            Align(alignment: Alignment.bottomCenter, child: _buildBottomMenu()),
-            _buildYouLeftTheExam(),
-            if (isScreenRecordingInIos)
-              SizedBox(
-                width: context.width,
-                height: context.height,
-                child: const ColoredBox(color: Colors.black),
-              ),
-          ],
+        body: WillPopScope(
+          onWillPop: () async {
+            onTapBackButton();
+            return false;
+          },
+          child: Stack(
+            children: [
+              _buildQuestions(),
+              Align(alignment: Alignment.bottomCenter, child: _buildBottomMenu()),
+              _buildYouLeftTheExam(),
+              _buildSecurityWarning(),
+              _buildSecurityIndicators(),
+              if (isScreenRecordingInIos)
+                SizedBox(
+                  width: context.width,
+                  height: context.height,
+                  child: const ColoredBox(color: Colors.black),
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
+  void showAppMinimizeWarningDialog() {
+    if (isWarningDialogOpen) return;
 
-  void onTapBackButton() {
+    isWarningDialogOpen = true;
+
+    final remainingWarnings = 3 - appMinimizeCount;
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Warning Icon
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                // Title
+                Text(
+                  "Warning ${appMinimizeCount}/3",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Message
+                Text(
+                  "You minimized the exam app.\n\n"
+                      "Remaining warnings: $remainingWarnings\n\n"
+                      "Next time your exam will be auto submitted.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onTertiary,
+                    fontSize: 15,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Buttons Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          submitResult();
+                          Navigator.of(dialogContext).pop();
+                          Navigator.of(context)
+                            ..pop()
+                            ..pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                          side: const BorderSide(color: Colors.red),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text("Exit Exam"),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                          Theme.of(context).primaryColor,
+                          padding:
+                          const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text(
+                          "Continue",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ).then((_) => isWarningDialogOpen = false);
+  }
+
+
+  void showExitWarningDialog() {
+    if (isExitDialogOpen) return;
+    
     isExitDialogOpen = true;
     context
         .showDialog<void>(
@@ -470,5 +712,9 @@ class _ExamScreenState extends State<ExamScreen> with WidgetsBindingObserver {
           },
         )
         .then((_) => isExitDialogOpen = false);
+  }
+
+  void onTapBackButton() {
+    showExitWarningDialog();
   }
 }

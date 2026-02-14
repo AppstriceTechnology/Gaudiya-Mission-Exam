@@ -309,40 +309,36 @@ class _SplashScreenState extends State<SplashScreen>
               child: Stack(
                 children: [
                   /// App Logo with circular animation
-                  Center(
-                    child: AnimatedBuilder(
-                      animation: _logoAnimationController,
-                      builder: (context, child) {
-                        return Opacity(
-                          opacity: _logoOpacityAnimation.value,
-                          child: Transform.scale(
-                            scale: _logoScaleUpAnimation.value -
-                                _logoScaleDownAnimation.value,
-                            child: Container(
-                              width: 150,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  _borderRadiusAnimation.value,
-                                ),
-                                color: Colors.transparent,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  _borderRadiusAnimation.value,
-                                ),
-                                child: QImage(
-                                  imageUrl: _appLogoPath,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
+              Center(
+              child: AnimatedBuilder(
+              animation: _logoAnimationController,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _logoOpacityAnimation.value,
+                    child: Transform.scale(
+                      scale: _logoScaleUpAnimation.value -
+                          _logoScaleDownAnimation.value,
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle, // perfect circle
+                          color: Colors.transparent,
+                        ),
+                        child: ClipOval( // <-- circle clip
+                          child: QImage(
+                            imageUrl: _appLogoPath,
+                            fit: BoxFit.cover,
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  );
+                },
+              ),
+            )
+
+            ],
               ),
             ),
           ),

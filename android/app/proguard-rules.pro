@@ -25,3 +25,9 @@
 -keep class io.flutter.util.** { *; }
 -keep class io.flutter.view.** { *; }
 -keep class io.flutter.** { *; }
+
+# Play Core (Fix for R8 error)
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+-keep class io.flutter.embedding.engine.deferredcomponents.** { *; }
+-keep class io.flutter.embedding.android.FlutterPlayStoreSplitApplication { *; }
